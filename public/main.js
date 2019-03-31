@@ -43,8 +43,8 @@ function connectVideo(data, _room){
         room.on('disconnected', room => {
             room.localParticipant.tracks.forEach(publication => {
               var attachedElements = publication.track.detach();
-              attachedElements.forEach(element => element.remove());
-              document.querySelector('.vid1').innerHTML='';
+            //   attachedElements.forEach(element => element.remove());
+              document.querySelector('.vid1').innerHTML='<div class="vid2" style="position:absolute; width:20%; bottom:1%; right:1%"></div>';
               document.querySelector('.vid2').innerHTML='';
             });
         });

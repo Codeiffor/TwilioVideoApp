@@ -6,15 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Twilio Video</title>
     <script src="https://media.twiliocdn.com/sdk/js/video/releases/2.0.0-beta6/twilio-video.min.js"></script>
+    <style>
+        video{
+            width:100%
+        }
+    </style>
 </head>
 <body>
     <p>user name <input type="text" name="name" class="name"></p>
     <p>room name <input type="text" name="room" class="roomname"></p>
     <button class="connect-btn">connect</button>
     <button class="disconnect-btn">disconnect</button>
-    <div class="vid1"></div>
-    <div class="vid2"></div>
-
+    <div class="vid1" style="position:relative; width:640px">
+        <div class="vid2" style="position:absolute; width:20%; bottom:1%; right:1%"></div>
+    </div>
 
     <script src="./main.js"></script>
 </body>
