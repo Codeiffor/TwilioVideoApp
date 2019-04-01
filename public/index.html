@@ -17,8 +17,9 @@
     <p>room name <input type="text" name="room" class="roomname"></p>
     <button class="connect-btn">connect</button>
     <button class="disconnect-btn">disconnect</button>
-    <div class="vid1" style="position:relative; width:640px">
-        <div class="vid2" style="position:absolute; width:20%; bottom:1%; right:1%"></div>
+    <div class="box" style="position:relative; width:640px; height:640px">
+        <div class="vid1" style="z-index:1;position:absolute; width:100%"></div>
+        <div class="vid2" style="z-index:2;position:absolute; width:20%; top:1%; right:1%"></div>
     </div>
 
     <script src="./main.js"></script>

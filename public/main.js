@@ -31,18 +31,18 @@ function connectVideo(data, _room){
         room.on('participantConnected', participant => {
             console.log(`A remote Participant connected: ${participant}`);
             participant.on('trackSubscribed', track => {
-                document.querySelector('.vid2').appendChild(track.attach());
+                document.querySelector('.vid1').appendChild(track.attach());
             });
         });
 
         setVideo(room);
 
         room.on('participantDisconnected', participant => {
-            document.querySelector('.vid2').innerHTML='';
+            document.querySelector('.vid1').innerHTML='';
         });
 
         room.on('disconnected', room => {
-            document.querySelector('.vid1').innerHTML='<div class="vid2" style="position:absolute; width:20%; bottom:1%; right:1%"></div>';
+            document.querySelector('.vid1').innerHTML='';
             document.querySelector('.vid2').innerHTML='';
         });
         
@@ -57,7 +57,7 @@ function connectVideo(data, _room){
 }
 function setVideo(room){
     Twilio.Video.createLocalTracks().then(function(localTracks) {
-        var localMediaContainer = document.querySelector('.vid1');
+        var localMediaContainer = document.querySelector('.vid2');
         localTracks.forEach(function(track) {
             localMediaContainer.appendChild(track.attach());
         });
@@ -65,14 +65,7 @@ function setVideo(room){
     });
     room.participants.forEach(participant => {
         participant.on('trackSubscribed', track => {
-                document.querySelector('.vid2').appendChild(track.attach());
+                document.querySelector('.vid1').appendChild(track.attach());
             });
-        // participant.tracks.forEach(publication => {
-        // if (publication.isSubscribed) {
-        //     console.log(publication)
-        //     var track = publication.track;
-        //     document.querySelector('.vid2').appendChild(track.attach());
-        //     }
-        // });
     });
 }
