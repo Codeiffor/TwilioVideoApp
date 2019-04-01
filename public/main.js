@@ -1,6 +1,7 @@
 document.querySelector(".connect-btn").addEventListener("click", (event) => {
     connectUser();
 })
+var trackArray;
 function connectUser(){
     var name = document.querySelector(".name").value;
     var _room = document.querySelector(".roomname").value;
@@ -41,15 +42,13 @@ function connectVideo(data, _room){
         });
 
         room.on('disconnected', room => {
-            room.localParticipant.tracks.forEach(publication => {
-              var attachedElements = publication.track.detach();
-            //   attachedElements.forEach(element => element.remove());
-              document.querySelector('.vid1').innerHTML='<div class="vid2" style="position:absolute; width:20%; bottom:1%; right:1%"></div>';
-              document.querySelector('.vid2').innerHTML='';
-            });
+            document.querySelector('.vid1').innerHTML='<div class="vid2" style="position:absolute; width:20%; bottom:1%; right:1%"></div>';
+            document.querySelector('.vid2').innerHTML='';
         });
         
         document.querySelector(".disconnect-btn").addEventListener("click", (event) => {
+            trackArray[0].stop();
+            trackArray[1].stop();
             room.disconnect();
         })
         }, error => {
@@ -62,6 +61,7 @@ function setVideo(room){
         localTracks.forEach(function(track) {
             localMediaContainer.appendChild(track.attach());
         });
+        trackArray = localTracks;
     });
     room.participants.forEach(participant => {
         participant.on('trackSubscribed', track => {
