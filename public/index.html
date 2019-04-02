@@ -13,13 +13,12 @@
     </style>
 </head>
 <body>
-    <p>user name <input type="text" name="name" class="name"></p>
-    <p>room name <input type="text" name="room" class="roomname"></p>
+    <p>user name <input type="text" name="name" class="name"> room name <input type="text" name="room" class="roomname"></p>
     <button class="connect-btn">connect</button>
     <button class="disconnect-btn">disconnect</button>
     <div class="box" style="position:relative; width:640px; height:640px">
-        <div class="vid1" style="z-index:1;position:absolute; width:100%"></div>
-        <div class="vid2" style="z-index:2;position:absolute; width:20%; top:1%; right:1%"></div>
+        <div class="vidParticipant" style="z-index:1;position:absolute; width:100%"></div>
+        <div class="vidLocal" style="z-index:2;position:absolute; width:20%; top:1%; right:1%"></div>
     </div>
 
     <script src="./main.js"></script>
