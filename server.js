@@ -4,6 +4,7 @@ require('dotenv').config()
 
 var AccessToken = require('twilio').jwt.AccessToken;
 var VideoGrant = AccessToken.VideoGrant;
+var ChatGrant = AccessToken.ChatGrant;
 
 // Substitute your Twilio AccountSid and ApiKey details
 var ACCOUNT_SID = process.env.ACCOUNT_SID;
@@ -13,23 +14,28 @@ var API_KEY_SECRET = process.env.API_KEY_SECRET;
 app.use(express.static('public'))
   
 app.get('/accesstoken/:room/:user', (req, res) => {
+    var room = req.params.room;
+    var user = req.params.user;
+    console.log('Room, User = '+room+ ', '+ user);
+
     var accessToken = new AccessToken(
         ACCOUNT_SID,
         API_KEY_SID,
         API_KEY_SECRET
     );
-    var room = req.params.room;
-    var user = req.params.user;
-    console.log(room+ ' '+ user);
-
     accessToken.identity = user;
 
-    var grant = new VideoGrant();
-    grant.room = room;
-    accessToken.addGrant(grant);
+    var videoGrant = new VideoGrant();
+    videoGrant.room = room;
+    accessToken.addGrant(videoGrant);
+
+    var chatGrant = new ChatGrant({
+        serviceSid: process.env.CHAT_SERVICE_SID,
+        endpointId: 'TwilioChat'+ ':' + user + ':' + room
+    });
+    accessToken.addGrant(chatGrant);
 
     var jwt = accessToken.toJwt();
-
     res.json({room, user, jwt});
 })
 

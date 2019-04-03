@@ -1,16 +1,21 @@
 var trackArray;
+var vidParticipant = document.querySelector('.vidParticipant');
+var vidLocal = document.querySelector('.vidLocal');
+var disconnectBtn = document.querySelector(".disconnect-btn");
+var connectBtn = document.querySelector(".connect-btn");
 
-//call connectUser to get token on button click
-document.querySelector(".connect-btn").addEventListener("click", (event) => {
-    document.querySelector(".disconnect-btn").click()
-    connectUser();
+//call getUserToken to get token on button click
+connectBtn.addEventListener("click", (event) => {
+    disconnectBtn.click()
+    getUserToken();
 })
 
 //GET token and call connectVideo
 
-function connectUser(){
+function getUserToken(){
     var name = document.querySelector(".name").value;
     var _room = document.querySelector(".roomname").value;
+    if(_room == '') _room = 'test';
     fetch(window.location.origin+"/accesstoken/"+_room+"/"+name)
         .then(function(response) {
             if (response.status !== 200) {
@@ -19,7 +24,9 @@ function connectUser(){
             }
             response.json().then(function(data) {
                 console.log('token generated');
-                connectVideo(data, _room);
+
+                connectVideo(data, _room);  // Connect Video of local and remote users
+                // connectChat();   //connect to chat client
             });
         }
     ).catch(function(err) {
@@ -27,8 +34,7 @@ function connectUser(){
     });
 }
 
-//connecting to Room
-
+//connecting video to Room
 function connectVideo(data, _room){
     Twilio.Video.connect(data.jwt, {
         audio: true,
@@ -40,20 +46,22 @@ function connectVideo(data, _room){
             trackArray[0].stop();
             trackArray[1].stop();
         }
-        console.log(`Connected to Room: ${_room}`);
+
+        addVideoTracks(room);   // adding video tracks to room
+
         connectionListeners(room);
-        setVideo(room);
+        console.log(`Connected to Room: ${_room}`);
     }, error => {
         console.error(`Unable to connect to Room: ${error.message}`);
     });
 }
 
-//setting video on page
-async function setVideo(room){
+//add video tracks on page
+async function addVideoTracks(room){
     await Twilio.Video.createLocalTracks().then(function(localTracks) {
         trackArray = localTracks;
         localTracks.forEach( track => {
-            document.querySelector('.vidLocal').appendChild(track.attach());
+            vidLocal.appendChild(track.attach());
         });
         addRemoteUsers(room);
     });
@@ -67,29 +75,31 @@ function connectionListeners(room) {
         
         console.log(`A remote Participant connected: ${participant}`);
         participant.on('trackSubscribed', track => {
-            document.querySelector('.vidParticipant').appendChild(track.attach());
+            vidParticipant.appendChild(track.attach());
         });
     });
 
     // when a participant disconnects
     room.on('participantDisconnected', participant => {
         console.log(`A remote Participant disconnected: ${participant}`);
-        document.querySelector('.vidParticipant').innerHTML='';
+        vidParticipant.innerHTML='';
+        // add video tracks of remaining participants
         room.participants.forEach(participant => {
             participant.tracks.forEach(publication => {
-                document.querySelector('.vidParticipant').appendChild(publication.track.attach());
+                vidParticipant.appendChild(publication.track.attach());
             });                
         });
     });
 
-    // when user disconnects
+    // when local user disconnects
     room.on('disconnected', room => {
-        document.querySelector('.vidParticipant').innerHTML='';
-        document.querySelector('.vidLocal').innerHTML='';
+        vidParticipant.innerHTML='';
+        vidLocal.innerHTML='';
     });
 
     //remove tracks on participant disconnect
-    document.querySelector(".disconnect-btn").addEventListener("click", (event) => {
+    disconnectBtn.addEventListener("click", (event) => {
+        // important before disconnecting to turn off webcam
         trackArray[0].stop();
         trackArray[1].stop();
         room.disconnect();
@@ -99,7 +109,7 @@ function connectionListeners(room) {
 function addRemoteUsers(room) {
     room.participants.forEach(participant => {
         participant.on('trackSubscribed', track => {
-            document.querySelector('.vidParticipant').appendChild(track.attach());
+            vidParticipant.appendChild(track.attach());
         });
     });
 }
