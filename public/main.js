@@ -1,5 +1,6 @@
 var trackArray;
 var chatChannel;
+var _chatClient;
 var vidParticipant = document.querySelector('.vidParticipant');
 var vidLocal = document.querySelector('.vidLocal');
 var disconnectBtn = document.querySelector(".disconnect-btn");
@@ -107,6 +108,9 @@ function connectionListeners(room) {
         vidLocal.innerHTML='';
         chat.innerHTML='';
         chatChannel.removeAllListeners();
+        var old_element = sendBtn;
+        var new_element = old_element.cloneNode(true);
+        old_element.parentNode.replaceChild(new_element, old_element);
     });
 
     //remove tracks on participant disconnect
@@ -115,6 +119,7 @@ function connectionListeners(room) {
         trackArray[0].stop();
         trackArray[1].stop();
         room.disconnect();
+        chatChannel.leave();
     })
 }
 // append participant tracks that are alredy connected
@@ -136,6 +141,7 @@ function addRemoteUsers(room) {
 function connectChat(data){
     Twilio.Chat.Client.create(data.jwt).then(chatClient => {
         console.log(chatClient);   
+        _chatClient=chatClient;
         chatClient.getChannelByUniqueName(data.room)
         .then(channel => channel
         ,error => {
@@ -171,6 +177,7 @@ function connectChat(data){
 
 //chat listeners
 function chatChannelListeners(channel){
+    sendBtn = document.querySelector(".send-btn");
     sendBtn.addEventListener('click', event => {
         if(sendMessage.value!='')
             channel.sendMessage(sendMessage.value);
