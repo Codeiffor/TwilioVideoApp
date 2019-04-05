@@ -1,4 +1,5 @@
 var trackArray;
+var chatChannel;
 var vidParticipant = document.querySelector('.vidParticipant');
 var vidLocal = document.querySelector('.vidLocal');
 var disconnectBtn = document.querySelector(".disconnect-btn");
@@ -12,10 +13,10 @@ connectBtn.addEventListener("click", (event) => {
     disconnectBtn.click()
     getUserToken();
 })
-
-// sendBtn.addEventListener('click', event => {
-// });
-
+sendMessage.addEventListener('keypress',e => {
+    if(e.keyCode == 13)
+        sendBtn.click();
+});
 //GET token and call connectVideo
 
 function getUserToken(){
@@ -81,10 +82,17 @@ function connectChat(data){
         })
         .then(async channel => {
             console.log(channel);
+            chatChannel = channel;
             await channel.join()
                 .catch(err => {console.log("err: member already exists")});
-            channel.getMessages().then(messages=>{
-                console.log(messages);
+            channel.getMessages().then(msg=>{
+                console.log(msg);
+                chat.innerHTML='';
+                for (i = 0; i <  msg.items.length; i++) {
+                    chat.innerHTML+='<div class="sender">'+msg.items[i].author+'</div>'+
+                    '<div class="single-msg">'+msg.items[i].body+'</div><br>';
+                    chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+                }
             });
             chatChannelListeners(channel);
         })
@@ -107,9 +115,11 @@ async function addVideoTracks(room){
 //chat listeners
 function chatChannelListeners(channel){
     sendBtn.addEventListener('click', event => {
-        channel.sendMessage(sendMessage.value);
+        if(sendMessage.value!='')
+            channel.sendMessage(sendMessage.value);
+        sendMessage.value='';
     });
-    channel.on('messageAdded', msg => {
+    channel.on('messageAdded', message => {
         console.log(message.author, message.body);
         chat.innerHTML+='<div class="sender">'+message.author+'</div>'+
         '<div class="single-msg">'+message.body+'</div><br>';
@@ -145,6 +155,8 @@ function connectionListeners(room) {
     room.on('disconnected', room => {
         vidParticipant.innerHTML='';
         vidLocal.innerHTML='';
+        chat.innerHTML='';
+        
     });
 
     //remove tracks on participant disconnect

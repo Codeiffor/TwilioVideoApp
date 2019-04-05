@@ -10,7 +10,10 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         video{
-            width:100%
+            width:100%;
+            height:inherit;
+            max-height: 40em;
+            border: 1px solid white;
         }
         .chatbox{
             border: grey 2px solid;
@@ -19,28 +22,39 @@
         .send-box{
             position: absolute;
             bottom:1px;
-            width:95%;
+            left:2%;
+            width:96%;
         }
         .chat{
             position:absolute;
             bottom:4rem;
+            left:0;
             height: 35em;
-            width:95%;
+            width:100%;
             overflow-y:scroll;
         }
         .single-msg{
             background:lightgray;
-            margin:5px;
-            padding:5px 10px;
+            margin:0 5px 5px 15px;
+            padding:0 10px 5px 10px;
             border-radius: 5px 10px;
             display:inline-block;
         }
         .sender{
             color:green;
-            margin:5px;
-            padding:5px;
+            margin:5px 5px 0 5px;
+            padding:0 5px;
             border-radius: 5px 10px;
-            display:inline-block;
+        }
+        input{
+            padding:5px;
+        }
+        .video-chat{
+            min-height: 10em;
+            max-height:auto;
+        }
+        .vidParticipant{
+            height:inherit;
         }
     </style>
 </head>
@@ -48,25 +62,25 @@
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand">Twilio Video App</a>
         <div>
-            <div class="input-group">
-                <input class="mb-1 form-control name" type="text" placeholder="Name" aria-label="Name">&nbsp;&nbsp;
-                <input class="mb-1 form-control roomname" type="text" placeholder="Room Name" aria-label="Room Name">&nbsp;&nbsp;
-            </div>
-                <button class="btn btn-outline-success connect-btn">Connect</button>&nbsp;&nbsp;
-                <button class="btn btn-outline-danger  disconnect-btn">Disconnect</button>
+            <input class="mb-1  name" type="text" placeholder="Name" aria-label="Name">&nbsp;&nbsp;
+            <input class="mb-1  roomname" type="text" placeholder="Room Name" aria-label="Room Name">&nbsp;&nbsp;
+            <button class="btn btn-outline-success connect-btn">Connect</button>&nbsp;&nbsp;
+            <button class="btn btn-outline-danger  disconnect-btn">Disconnect</button>
         </div>
+        <div style="margin-left: 40em"></div>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container-fluid p-5">
         <div class="row">
-            <div class="col-12 col-sm-4 p-2">
+            <div class="video-chat col-12 col-sm-4 p-2">
+                <strong>Videos:</strong>
                 <div class="m-1 col-12" style="position:relative">
-                    <div class="vidParticipant" style="z-index:1;position:absolute; width:100%"></div>
-                    <div class="vidLocal" style="z-index:2;position:absolute; width:20%; top:1%; right:1%"></div>
+                    <div class="vidParticipant" style="z-index:1; width:100%"></div>
+                    <div class="vidLocal" style="z-index:2;position:absolute; width:20%; top:1%; left:1em"></div>
                 </div>
             </div>
             <div class="col-12 offset-sm-4 col-sm-4 p-2">
-                <strong>Chat Here</strong>
+                <strong>Chat:</strong>
                 <div class="chatbox m-1 col-12">
                     <div class="chat">
                     </div>
