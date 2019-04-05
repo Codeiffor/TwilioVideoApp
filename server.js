@@ -10,6 +10,7 @@ var ChatGrant = AccessToken.ChatGrant;
 var ACCOUNT_SID = process.env.ACCOUNT_SID;
 var API_KEY_SID = process.env.API_KEY_SID;
 var API_KEY_SECRET = process.env.API_KEY_SECRET;
+var CHAT_SERVICE_SID = process.env.CHAT_SERVICE_SID;
 
 app.use(express.static('public'))
   
@@ -30,7 +31,7 @@ app.get('/accesstoken/:room/:user', (req, res) => {
     accessToken.addGrant(videoGrant);
 
     var chatGrant = new ChatGrant({
-        serviceSid: process.env.CHAT_SERVICE_SID,
+        serviceSid: CHAT_SERVICE_SID,
         endpointId: 'TwilioChat'+ ':' + user + ':' + room
     });
     accessToken.addGrant(chatGrant);

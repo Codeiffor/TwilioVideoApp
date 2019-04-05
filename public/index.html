@@ -6,21 +6,82 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Twilio Video</title>
     <script src="https://media.twiliocdn.com/sdk/js/video/releases/2.0.0-beta6/twilio-video.min.js"></script>
+    <script src="https://media.twiliocdn.com/sdk/js/chat/v3.2/twilio-chat.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
         video{
             width:100%
         }
+        .chatbox{
+            border: grey 2px solid;
+            height:40em;
+        }
+        .send-box{
+            position: absolute;
+            bottom:1px;
+            width:95%;
+        }
+        .chat{
+            position:absolute;
+            bottom:4rem;
+            height: 35em;
+            width:95%;
+            overflow-y:scroll;
+        }
+        .single-msg{
+            background:lightgray;
+            margin:5px;
+            padding:5px 10px;
+            border-radius: 5px 10px;
+            display:inline-block;
+        }
+        .sender{
+            color:green;
+            margin:5px;
+            padding:5px;
+            border-radius: 5px 10px;
+            display:inline-block;
+        }
     </style>
 </head>
 <body>
-    <p>user name <input type="text" name="name" class="name"> room name <input type="text" name="room" class="roomname"></p>
-    <button class="connect-btn">connect</button>
-    <button class="disconnect-btn">disconnect</button>
-    <div class="box" style="position:relative; width:640px; height:640px">
-        <div class="vidParticipant" style="z-index:1;position:absolute; width:100%"></div>
-        <div class="vidLocal" style="z-index:2;position:absolute; width:20%; top:1%; right:1%"></div>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand">Twilio Video App</a>
+        <div>
+            <div class="input-group">
+                <input class="mb-1 form-control name" type="text" placeholder="Name" aria-label="Name">&nbsp;&nbsp;
+                <input class="mb-1 form-control roomname" type="text" placeholder="Room Name" aria-label="Room Name">&nbsp;&nbsp;
+            </div>
+                <button class="btn btn-outline-success connect-btn">Connect</button>&nbsp;&nbsp;
+                <button class="btn btn-outline-danger  disconnect-btn">Disconnect</button>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-sm-4 p-2">
+                <div class="m-1 col-12" style="position:relative">
+                    <div class="vidParticipant" style="z-index:1;position:absolute; width:100%"></div>
+                    <div class="vidLocal" style="z-index:2;position:absolute; width:20%; top:1%; right:1%"></div>
+                </div>
+            </div>
+            <div class="col-12 offset-sm-4 col-sm-4 p-2">
+                <strong>Chat Here</strong>
+                <div class="chatbox m-1 col-12">
+                    <div class="chat">
+                    </div>
+                    <div class="input-group mb-3 send-box">
+                        <input type="text" class="form-control send-message" placeholder="message">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary send-btn" type="button">SEND</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="./main.js"></script>
+    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script> -->
 </body>
 </html>
