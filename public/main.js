@@ -41,6 +41,9 @@ function getUserToken(){
     });
 }
 
+
+//----------------------------------VIDEO START--------------------------------
+
 //connecting video to Room
 function connectVideo(data, _room){
     Twilio.Video.connect(data.jwt, {
@@ -63,44 +66,6 @@ function connectVideo(data, _room){
     });
 }
 
-// connect user chat client
-function connectChat(data){
-    Twilio.Chat.Client.create(data.jwt).then(chatClient => {
-        console.log(chatClient);   
-        chatClient.getChannelByUniqueName(data.room)
-        .then(channel => channel
-        ,error => {
-            if(error.body.code===50300){
-                return chatClient.createChannel({
-                    uniqueName: data.room,
-                    friendlyName: data.room+' Chat Channel',
-                });
-            }
-            else{
-                console.log(error.body);
-            }
-        })
-        .then(async channel => {
-            console.log(channel);
-            chatChannel = channel;
-            await channel.join()
-                .catch(err => {console.log("err: member already exists")});
-            channel.getMessages().then(msg=>{
-                console.log(msg);
-                chat.innerHTML='';
-                for (i = 0; i <  msg.items.length; i++) {
-                    chat.innerHTML+='<div class="sender">'+msg.items[i].author+'</div>'+
-                    '<div class="single-msg">'+msg.items[i].body+'</div><br>';
-                    chat.scrollTop = chat.scrollHeight - chat.clientHeight;
-                }
-            });
-            chatChannelListeners(channel);
-        })
-    }, error => {
-        console.error(`Unable to connect chat: ${error}`);
-    });  
-}
-
 //add video tracks on page
 async function addVideoTracks(room){
     await Twilio.Video.createLocalTracks().then(function(localTracks) {
@@ -109,21 +74,6 @@ async function addVideoTracks(room){
             vidLocal.appendChild(track.attach());
         });
         addRemoteUsers(room);
-    });
-}
-
-//chat listeners
-function chatChannelListeners(channel){
-    sendBtn.addEventListener('click', event => {
-        if(sendMessage.value!='')
-            channel.sendMessage(sendMessage.value);
-        sendMessage.value='';
-    });
-    channel.on('messageAdded', message => {
-        console.log(message.author, message.body);
-        chat.innerHTML+='<div class="sender">'+message.author+'</div>'+
-        '<div class="single-msg">'+message.body+'</div><br>';
-        chat.scrollTop = chat.scrollHeight - chat.clientHeight;
     });
 }
 
@@ -156,7 +106,7 @@ function connectionListeners(room) {
         vidParticipant.innerHTML='';
         vidLocal.innerHTML='';
         chat.innerHTML='';
-        
+        chatChannel.removeAllListeners();
     });
 
     //remove tracks on participant disconnect
@@ -175,3 +125,64 @@ function addRemoteUsers(room) {
         });
     });
 }
+
+//----------------------------------VIDEO END--------------------------------
+
+//==========================================================================
+
+//----------------------------------CHAT START------------------------------
+
+// connect user chat client
+function connectChat(data){
+    Twilio.Chat.Client.create(data.jwt).then(chatClient => {
+        console.log(chatClient);   
+        chatClient.getChannelByUniqueName(data.room)
+        .then(channel => channel
+        ,error => {
+            if(error.body.code===50300){
+                return chatClient.createChannel({
+                    uniqueName: data.room,
+                    friendlyName: data.room+' Chat Channel',
+                });
+            }
+            else{
+                console.log(error.body);
+            }
+        })
+        .then(async channel => {
+            console.log(channel);
+            await channel.join()
+                .catch(err => {console.log("err: member already exists")});
+            channel.getMessages().then(msg=>{
+                console.log(msg);
+                chat.innerHTML='';
+                for (i = 0; i <  msg.items.length; i++) {
+                    chat.innerHTML+='<div class="sender">'+msg.items[i].author+'</div>'+
+                    '<div class="single-msg">'+msg.items[i].body+'</div><br>';
+                    chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+                }
+            });
+            chatChannelListeners(channel);
+        })
+    }, error => {
+        console.error(`Unable to connect chat: ${error}`);
+    });  
+}
+
+//chat listeners
+function chatChannelListeners(channel){
+    sendBtn.addEventListener('click', event => {
+        if(sendMessage.value!='')
+            channel.sendMessage(sendMessage.value);
+        sendMessage.value='';
+    });
+    channel.on('messageAdded', message => {
+        console.log(message.author, message.body);
+        chat.innerHTML+='<div class="sender">'+message.author+'</div>'+
+        '<div class="single-msg">'+message.body+'</div><br>';
+        chat.scrollTop = chat.scrollHeight - chat.clientHeight;
+    });
+    chatChannel = channel;
+}
+
+//-----------------------------------CHAT END------------------------------------------
