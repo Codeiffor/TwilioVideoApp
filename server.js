@@ -40,4 +40,4 @@ app.get('/accesstoken/:room/:user', (req, res) => {
     res.json({room, user, jwt});
 })
 
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
