@@ -9,6 +9,9 @@
     <script src="https://media.twiliocdn.com/sdk/js/chat/v3.2/twilio-chat.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <style>
+        .navbar-brand{
+            color:rgb(0, 43, 93) !important;
+        }
         .chatbox{
             border: grey 2px solid;
             height:30em;
@@ -70,8 +73,8 @@
         }
         .white-board{
             border: grey 2px solid;
-            height: 30em;
-            width:inherit;
+            height: 100%;
+            width:100%;
         }
     </style>
 </head>
@@ -91,11 +94,12 @@
         <div class="row">
             <div class="col-12 col-sm-8 p-2">
                 <strong>WhiteBoard:</strong>
-                    <div class="board m-1 col-12">
-                        <div class="vidParticipant"></div>
-                        <div class="vidLocal"></div>
-                        <canvas class="white-board"></canvas>
-                    </div>
+                <div class="board m-1 col-12">
+                    <div class="vidParticipant"></div>
+                    <div class="vidLocal"></div>
+                    <canvas class="white-board"></canvas>
+                </div>
+                <button class="btn btn-outline-info clear-whiteboard">Clear</button>
             </div>
             <div class="col-12 col-sm-4 p-2">
                 <strong>Chat:</strong>
