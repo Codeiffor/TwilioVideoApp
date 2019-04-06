@@ -1,4 +1,5 @@
 var trackArray;
+var dataTrack;
 var chatChannel;
 var _chatClient;
 var vidParticipant = document.querySelector('.vidParticipant');
@@ -33,7 +34,7 @@ function getUserToken(){
             response.json().then(function(data) {
                 console.log('token generated');
 
-                connectVideo(data, _room);  // Connect Video of local and remote users
+                connectVideo(data);  // Connect Video of local and remote users
                 connectChat(data);   //connect to chat client
             });
         }
@@ -46,35 +47,28 @@ function getUserToken(){
 //----------------------------------VIDEO START--------------------------------
 
 //connecting video to Room
-function connectVideo(data, _room){
-    Twilio.Video.connect(data.jwt, {
-        audio: true,
-        name: _room,
-        video: { width: 640 }
-    })
-    .then(room => {
+async function connectVideo(data){
+    await Twilio.Video.createLocalTracks().then(function(localTracks) {
         if(trackArray){
             trackArray[0].stop();
             trackArray[1].stop();
         }
-
-        addVideoTracks(room);   // adding video tracks to room
-
-        connectionListeners(room);
-        console.log(`Connected to Room: ${_room}`);
-    }, error => {
-        console.error(`Unable to connect to Room: ${error}`);
-    });
-}
-
-//add video tracks on page
-async function addVideoTracks(room){
-    await Twilio.Video.createLocalTracks().then(function(localTracks) {
         trackArray = localTracks;
         localTracks.forEach( track => {
             vidLocal.appendChild(track.attach());
         });
+    });
+    dataTrack = new Twilio.Video.LocalDataTrack(); //New Data track
+    Twilio.Video.connect(data.jwt, {
+        name: data.room,
+        tracks: [dataTrack,trackArray[0],trackArray[1]]
+    })
+    .then(room => {        
         addRemoteUsers(room);
+        connectionListeners(room);
+        console.log(`Connected to Room: ${data.room}`);
+    }, error => {
+        console.error(`Unable to connect to Room: ${error}`);
     });
 }
 
@@ -86,7 +80,10 @@ function connectionListeners(room) {
         
         console.log(`A remote Participant connected: ${participant}`);
         participant.on('trackSubscribed', track => {
-            vidParticipant.appendChild(track.attach());
+            console.log(track);
+            
+            if(track.kind!='data')
+                vidParticipant.appendChild(track.attach());
         });
     });
 
@@ -97,7 +94,8 @@ function connectionListeners(room) {
         // add video tracks of remaining participants
         room.participants.forEach(participant => {
             participant.tracks.forEach(publication => {
-                vidParticipant.appendChild(publication.track.attach());
+                if(track.kind!='data')
+                    vidParticipant.appendChild(publication.track.attach());
             });                
         });
     });
@@ -126,7 +124,8 @@ function connectionListeners(room) {
 function addRemoteUsers(room) {
     room.participants.forEach(participant => {
         participant.on('trackSubscribed', track => {
-            vidParticipant.appendChild(track.attach());
+            if(track.kind!='data')
+                vidParticipant.appendChild(track.attach());
         });
     });
 }
@@ -140,7 +139,6 @@ function addRemoteUsers(room) {
 // connect user chat client
 function connectChat(data){
     Twilio.Chat.Client.create(data.jwt).then(chatClient => {
-        console.log(chatClient);   
         _chatClient=chatClient;
         chatClient.getChannelByUniqueName(data.room)
         .then(channel => channel
@@ -156,11 +154,9 @@ function connectChat(data){
             }
         })
         .then(async channel => {
-            console.log(channel);
             await channel.join()
                 .catch(err => {console.log("err: member already exists")});
             channel.getMessages().then(msg=>{
-                console.log(msg);
                 chat.innerHTML='';
                 for (i = 0; i <  msg.items.length; i++) {
                     chat.innerHTML+='<div class="sender">'+msg.items[i].author+'</div>'+
