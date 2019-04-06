@@ -83,6 +83,12 @@ function connectionListeners(room) {
         participant.on('trackSubscribed', track => {
             if(track.kind!='data')
                 vidParticipant.appendChild(track.attach());
+            else{
+                publication.track.on('message', data => {
+                    let p =JSON.parse(data);
+                    drawPoints(p.xx, p.yy);
+                });
+            }
         });
     });
 
@@ -95,12 +101,6 @@ function connectionListeners(room) {
             participant.tracks.forEach(publication => {
                 if(publication.track.kind!='data')
                     vidParticipant.appendChild(publication.track.attach());
-                else{
-                    publication.track.on('message', data => {
-                        let p =JSON.parse(data);
-                        drawPoints(p.xx, p.yy);
-                    });
-                }
             });                
         });
     });
