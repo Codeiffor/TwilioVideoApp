@@ -84,7 +84,7 @@ function connectionListeners(room) {
             if(track.kind!='data')
                 vidParticipant.appendChild(track.attach());
             else{
-                publication.track.on('message', data => {
+                track.on('message', data => {
                     let p =JSON.parse(data);
                     drawPoints(p.xx, p.yy);
                 });
