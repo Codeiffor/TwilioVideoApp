@@ -237,10 +237,12 @@ canvas.addEventListener('mouseup', event => {
     canvas.removeEventListener('mousemove',drawWhiteBoard);
 });
 function drawWhiteBoard(event){
-    let xx = event.clientX-offsetX
-    let yy = event.clientY-offsetY;
+    let xx = event.clientX-offsetX || event.targetTouches[0].clientX-offsetX;
+    let yy = event.clientY-offsetY || event.targetTouches[0].clientY-offsetY;
     drawPoints(xx, yy);
     if(dataTrack){
         dataTrack.send(JSON.stringify({xx, yy}));
     }
 }
+
+canvas.addEventListener("touchmove", drawWhiteBoard);
