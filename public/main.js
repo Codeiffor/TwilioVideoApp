@@ -221,7 +221,6 @@ var offsetX = canvas.getBoundingClientRect().x;
 var offsetY = canvas.getBoundingClientRect().y;
 
 function drawPoints(x, y){
-    ctx.save();
     ctx.beginPath();
     ctx.fillStyle='rgb(0, 0, 0)';
     ctx.arc(x,y,3,0,2*Math.PI);
@@ -237,6 +236,7 @@ canvas.addEventListener('mouseup', event => {
     canvas.removeEventListener('mousemove',drawWhiteBoard);
 });
 function drawWhiteBoard(event){
+    event.preventDefault();
     let xx = event.clientX-offsetX || event.targetTouches[0].clientX-offsetX;
     let yy = event.clientY-offsetY || event.targetTouches[0].clientY-offsetY;
     drawPoints(xx, yy);
